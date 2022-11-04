@@ -1,18 +1,20 @@
 package main
 
 import (
+	"api/controllers/authcontroller"
+	"api/models"
+	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"name": "ivannofick",
-			"bio":  "programmer",
-		})
-	})
-	router.Run()
+	models.ConnectDatabase()
+	r := mux.NewRouter()
+	r.HandleFunc("/login", authcontroller.Login).Methods("POST")
+	r.HandleFunc("/register", authcontroller.Register).Methods("POST")
+	r.HandleFunc("/logout", authcontroller.Logout).Methods("GET")
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
